@@ -104,36 +104,50 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glLineWidth(10);
-        glPointSize(20);
+        glPointSize(5); // Reduzido de 20 para 5 para não encobrir as faces coloridas
 
         float angle = (GLfloat)glfwGetTime();
 
-        model = glm::mat4(1); 
-        
-        // 1. Aplica a translação (move o objeto)
-        model = glm::translate(model, glm::vec3(translateX, translateY, translateZ));
-
-        // 2. Aplica a rotação (gira o objeto na nova posição)
-        if (rotateX)
-            model = glm::rotate(model, angle, glm::vec3(1.0f, 0.0f, 0.0f));
-        else if (rotateY)
-            model = glm::rotate(model, angle, glm::vec3(0.0f, 1.0f, 0.0f));
-        else if (rotateZ)
-            model = glm::rotate(model, angle, glm::vec3(0.0f, 0.0f, 1.0f));
-
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        
         glBindVertexArray(VAO);
         
-        // Desenha os 36 vértices do cubo (Polígonos preenchidos)
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // Loop iterando sobre os 5 cubos
+        for(unsigned int i = 0; i < 5; i++)
+        {
+            model = glm::mat4(1.0f); 
+            
+            // 1. Escala: Reduz aproox. 30% para que os cubos das bordas não sejam cortados da tela
+            model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
 
-        // Desenha os 36 vértices como pontos (Contorno)
-        glDrawArrays(GL_POINTS, 0, 36);
+            // 2. Translação global (Move todos juntos com as teclas WASD + IO (Up/Down))
+            model = glm::translate(model, glm::vec3(translateX, translateY, translateZ));
+
+            // 3. Posicionamento individual (lê a posição do cubo 'i' no array)
+            model = glm::translate(model, cubePositions[i]);
+
+            // 4. Rotação estática inicial (Inclina um pouco para evidenciar o 3D)
+            model = glm::rotate(model, glm::radians(35.0f), glm::vec3(1.0f, 1.0f, 0.0f));
+
+            // 5. Rotação dinâmica via teclado (X, Y, Z)
+            if (rotateX)
+                model = glm::rotate(model, angle, glm::vec3(1.0f, 0.0f, 0.0f));
+            else if (rotateY)
+                model = glm::rotate(model, angle, glm::vec3(0.0f, 1.0f, 0.0f));
+            else if (rotateZ)
+                model = glm::rotate(model, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            
+            // Desenha os 36 vértices do cubo atual (Polígonos preenchidos)
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            // Desenha os 36 vértices do cubo atual como pontos (Contorno)
+            glDrawArrays(GL_POINTS, 0, 36);
+        }
         
         glBindVertexArray(0);
         glfwSwapBuffers(window);
     }
+    
     glDeleteVertexArrays(1, &VAO);
     glfwTerminate();
     return 0;
