@@ -1,4 +1,5 @@
 # Ignorar a pasta de build e arquivos temporários do CMake
+
 /build/
 /CMakeCache.txt
 /CMakeFiles/
