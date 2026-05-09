@@ -120,12 +120,22 @@ int main()
 	// Compilando e buildando o programa de shader
 	GLuint shaderID = setupShader();
 
-	// Gerando um buffer simples, com a geometria de um triângulo
-	GLuint VAO = setupGeometry();
+	// Lendo modelo .obj e criando o VAO 
+	int nVertices;
+	std::string textureFileName;
 
-	// Carregando uma textura e armazenando seu id
+	// LEMBRETE nath: Alterar o caminho abaixo para assim apontar ao seu arquivo .obj real 
+	GLuint VAO = loadSimpleOBJ("path/to/your/model.obj", nVertices, textureFileName);
+
+	// Carregando a textura a partir do arquivo .mtl
 	int imgWidth, imgHeight;
-	GLuint texID = loadTexture("../assets/tex/pixelWall.png",imgWidth,imgHeight);
+	GLuint texID;
+	if (!textureFileName.empty()) {
+		std::string texturePath = "path/to/your/" + textureFileName; // LEMBRETE nath 2.0: Alterar o caminho para o diretório onde estão as texturas
+		texID = loadTexture(texturePath, imgWidth, imgHeight);
+	} else {
+		std::cout << "No texture found in MTL file. Exiting." << std::endl;
+	}
 
 	glUseProgram(shaderID);
 
@@ -158,14 +168,15 @@ int main()
 		glBindVertexArray(VAO); // Conectando ao buffer de geometria
 		glBindTexture(GL_TEXTURE_2D, texID); //conectando com o buffer de textura que será usado no draw
 
-		// Primeiro Triângulo
-		drawTriangle(shaderID, VAO, vec3(100.0, 500.0, 0.0), vec3(100.0, 100.0, 1.0), 0.0, vec3(0.0, 0.0, 1.0));
+		// Define as transformações para o objeto carregado (centralizado e com tamanho ajustado)
+        mat4 model = mat4(1.0f);
+        // Exemplo: Centralizando na tela (dependendo das coordenadas do seu OBJ)
+        model = translate(model, vec3(400.0f, 300.0f, 0.0f)); 
+        model = scale(model, vec3(100.0f, 100.0f, 100.0f)); // Ajuste a escala conforme o tamanho do seu modelo
+        glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
 
-		// Segundo Triângulo
-		drawTriangle(shaderID, VAO, vec3(350.0, 300.0, 0.0), vec3(200.0, 200.0, 1.0), 180.0, vec3(0.0, 1.0, 0.0));
-
-		// Terceiro Triângulo
-		drawTriangle(shaderID, VAO, vec3(600.0, 200.0, 0.0), vec3(300.0, 300.0, 1.0), 0.0, vec3(1.0, 0.0, 0.0));
+        // Desenha o objeto completo (todos os triângulos lidos do OBJ)
+        glDrawArrays(GL_TRIANGLES, 0, nVertices);
 
 		glBindVertexArray(0); // Desconectando o buffer de geometria
 
@@ -370,10 +381,70 @@ string getTexturePathFromMTL(string mtlFilePath) {
         std::string prefix;
         ss >> prefix;
 
-        if (prefix == "map_Kd") {
-            ss >> texPath;
-            break;
+        if (prefix == "map_Kd") { // Se a linha lida começar com "map_Kd" (textura difusa)
+            ss >> texPath; // Lê o proximo texto no fluxo (caminho da imagem) e jogaa na variável texPath
+            break; // PARA a execução do loop (sai do switch ou do for)	- já que encontrou o caminho da textura 
         }
     }
     return texPath;
+}
+
+int loadSimpleOBJ(string filePath, int &nVertices, string &textureName) {
+	std::vector<vec3> temp_vertices; // vetor para armazenar as coordenadas dos vértices
+	std::vector<vec2> temp_texCoords; // vetor para armazenar as coordenadas de textura
+	std::vector<GLfloat> vBuffer; // vetor para armazenar os dados do VBO (intercalando posição e coordenada de textura)
+	
+	std::ifstream file(filePath);
+	if (!file.is_open()) {
+		std::cerr << "Erro ao tentar abrir o arquivo " << filePath << std::endl;
+		return -1;
+	}
+
+	std::string line;
+	/* while (std::getline(file, line)) {
+		std::istringstream ss(line);
+		std::string prefix;
+		ss >> prefix;
+
+		if (prefix == "mtllib") {
+			std::string mtlFile;
+			ss >> mtlFile;
+			//Extrai o diretório do arquivo .obj para buscar o arquivo .mtl no mesmo lugar
+			std::string dir = filePath.substr(0, filePath.find_last_of("/") + 1);
+			textureName = getTexturePathFromMTL(dir + mtlFile);		
+		}
+		else if (prefix == "v") {
+			vec3 pos;
+			ss >> pos.x >> pos.y >> pos.z;
+			temp_vertices.push_back(pos);	
+		}
+		else if (prefix == "vt") {
+			vec2 tex;
+			ss >> tex.x >> tex.y;
+			temp_texCoords.push_back(tex);
+		}
+		 else if (prefix == "f") {
+            // Leitura de face no formato: v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3
+            std::string vertexData;
+            for (int i = 0; i < 3; i++) {
+                ss >> vertexData;
+                std::replace(vertexData.begin(), vertexData.end(), '/', ' ');
+                std::istringstream faceSS(vertexData);
+                unsigned int vIdx, tIdx, nIdx;
+ 		}
+				// Se o .obj não tiver normais (vn), a leitura pode falhar no nIdx, 
+                // mas para este escopo (posição e textura), isso é suficiente.
+               //faceSS >> vIdx >> tIdx;
+		 		// Recupera os dados (índices no .obj começam em 1)
+                vec3 pos = temp_vertices[vIdx - 1];
+                vec2 tex = temp_texCoords[tIdx - 1];
+
+                // Adiciona ao buffer intercalado (x, y, z, s, t)
+                vBuffer.push_back(pos.x);
+                vBuffer.push_back(pos.y);
+                vBuffer.push_back(pos.z);
+                vBuffer.push_back(tex.s);
+                vBuffer.push_back(tex.t);
+            }
+	} */
 }
