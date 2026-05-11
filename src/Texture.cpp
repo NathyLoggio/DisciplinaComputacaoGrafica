@@ -3,7 +3,7 @@
  * O código inicial foi adaptado pela Professora: Rossana Baptista Queiroz
  * 
  * Código modificado por: Nathaly Loggiovini
- * Última atualização do código: 07/03/2025 
+ * Última atualização do código: 11/05/2025 
  */
 
 #include <iostream>
@@ -30,6 +30,9 @@ using namespace glm;
 
 #include <cmath>
 
+#include <vector>
+#include <algorithm>
+
 #include <fstream>
 #include <sstream>
 
@@ -38,7 +41,6 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
 // Protótipos das funções
 int setupShader();
-int setupGeometry();
 GLuint loadTexture(string filePath, int &width, int &height);
 
 void drawTriangle(GLuint shaderID, GLuint VAO, vec3 position, vec3 dimensions, float angle, vec3 color, vec3 axis = (vec3(0.0, 0.0, 1.0)));
@@ -88,13 +90,8 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);*/
 
-	// Essencial para computadores da Apple
-	// #ifdef __APPLE__
-	//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	// #endif
-
 	// Criação da janela GLFW
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo Texturizado!", nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Imagem Texturizado!", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -124,17 +121,17 @@ int main()
 	int nVertices;
 	std::string textureFileName;
 
-	// LEMBRETE nath: Alterar o caminho abaixo para assim apontar ao seu arquivo .obj real 
-	GLuint VAO = loadSimpleOBJ("path/to/your/model.obj", nVertices, textureFileName);
+	// Caminho atualizado para o arquivo .obj real
+	GLuint VAO = loadSimpleOBJ("../assets/Modelos3D/Suzanne.obj", nVertices, textureFileName);
 
 	// Carregando a textura a partir do arquivo .mtl
 	int imgWidth, imgHeight;
 	GLuint texID;
 	if (!textureFileName.empty()) {
-		std::string texturePath = "path/to/your/" + textureFileName; // LEMBRETE nath 2.0: Alterar o caminho para o diretório onde estão as texturas
+		std::string texturePath = "../assets/Modelos3D/" + textureFileName;
 		texID = loadTexture(texturePath, imgWidth, imgHeight);
 	} else {
-		std::cout << "No texture found in MTL file. Exiting." << std::endl;
+		std::cout << "Nenhuma textura encontrada no arquivo MTL. Exit." << std::endl;
 	}
 
 	glUseProgram(shaderID);
@@ -147,14 +144,15 @@ int main()
 	
 
 	// Matriz de projeção paralela ortográfica
-	// mat4 projection = ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
-	mat4 projection = ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);
+	// Decidi trocar -1.0, 1.0 por valores grandes para englobar o modelo escalado
+	mat4 projection = ortho(0.0f, 800.0f, 0.0f, 600.0f, -1000.0f, 1000.0f);
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "projection"), 1, GL_FALSE, value_ptr(projection));
 
 	// Matriz de modelo: transformações na geometria (objeto)
 	mat4 model = mat4(1); // matriz identidade
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
 
+	glEnable(GL_DEPTH_TEST);
 	// Loop da aplicação - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
@@ -162,11 +160,12 @@ int main()
 		glfwPollEvents();
 
 		// Limpa o buffer de cor
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // cor de fundo
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.80f, 0.70f, 0.90f, 1.0f); // Fundo roxo lavanda <3
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
+		// Usei o  o operador OR bit a bit (|) para indicar que múltiplos buffers devem ser limpos ao mesmo tempo
 
 		glBindVertexArray(VAO); // Conectando ao buffer de geometria
-		glBindTexture(GL_TEXTURE_2D, texID); //conectando com o buffer de textura que será usado no draw
+		glBindTexture(GL_TEXTURE_2D, texID); // conectando com o buffer de textura que será usado no draw
 
 		// Define as transformações para o objeto carregado (centralizado e com tamanho ajustado)
         mat4 model = mat4(1.0f);
@@ -251,64 +250,6 @@ int setupShader()
 	return shaderProgram;
 }
 
-// Esta função está bastante harcoded - objetivo é criar os buffers que armazenam a
-// geometria de um triângulo
-// Apenas atributo coordenada nos vértices
-// 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
-// A função retorna o identificador do VAO
-int setupGeometry()
-{
-	// Aqui setamos as coordenadas x, y e z do triângulo e as armazenamos de forma
-	// sequencial, já visando mandar para o VBO (Vertex Buffer Objects)
-	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
-	// Pode ser arazenado em um VBO único ou em VBOs separados
-	GLfloat vertices[] = {
-		// x    y    z   s    t 
-		// T0
-		-0.5, -0.5, 0.0, 0.0, 0.0,    // v0
-		 0.5, -0.5, 0.0, 1.0, 0.0,    // v1
-		 0.0,  0.5, 0.0, 0.5, 1.0  	  // v2
-	};
-
-	GLuint VBO, VAO;
-	// Geração do identificador do VBO
-	glGenBuffers(1, &VBO);
-	// Faz a conexão (vincula) do buffer como um buffer de array
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// Envia os dados do array de floats para o buffer da OpenGl
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// Geração do identificador do VAO (Vertex Array Object)
-	glGenVertexArrays(1, &VAO);
-	// Vincula (bind) o VAO primeiro, e em seguida  conecta e seta o(s) buffer(s) de vértices
-	// e os ponteiros para os atributos
-	glBindVertexArray(VAO);
-	// Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando:
-	//  Localização no shader * (a localização dos atributos devem ser correspondentes no layout especificado no vertex shader)
-	//  Numero de valores que o atributo tem (por ex, 3 coordenadas xyz)
-	//  Tipo do dado
-	//  Se está normalizado (entre zero e um)
-	//  Tamanho em bytes
-	//  Deslocamento a partir do byte zero
-
-	//Atributo posição - coord x, y, z - 3 valores
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)0);
-	glEnableVertexAttribArray(0);
-
-	//Atributo coordenada de textura - coord s, t - 2 valores
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)(3* sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-
-	// Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice
-	// atualmente vinculado - para que depois possamos desvincular com segurança
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// Desvincula o VAO (é uma boa prática desvincular qualquer buffer ou array para evitar bugs medonhos)
-	glBindVertexArray(0);
-
-	return VAO;
-}
-
 GLuint loadTexture(string filePath, int &width, int &height)
 {
 	GLuint texID; // id da textura a ser carregada
@@ -326,6 +267,7 @@ GLuint loadTexture(string filePath, int &width, int &height)
 
 	// Carregamento da imagem usando a função stbi_load da biblioteca stb_image
 	int nrChannels;
+	stbi_set_flip_vertically_on_load(true);
 
 	unsigned char *data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 0);
 
@@ -390,61 +332,83 @@ string getTexturePathFromMTL(string mtlFilePath) {
 }
 
 int loadSimpleOBJ(string filePath, int &nVertices, string &textureName) {
-	std::vector<vec3> temp_vertices; // vetor para armazenar as coordenadas dos vértices
-	std::vector<vec2> temp_texCoords; // vetor para armazenar as coordenadas de textura
-	std::vector<GLfloat> vBuffer; // vetor para armazenar os dados do VBO (intercalando posição e coordenada de textura)
-	
-	std::ifstream file(filePath);
-	if (!file.is_open()) {
-		std::cerr << "Erro ao tentar abrir o arquivo " << filePath << std::endl;
-		return -1;
-	}
+    std::vector<vec3> temp_vertices; // vetor para armazenar as coordenadas dos vértices
+    std::vector<vec2> temp_texCoords; // vetor para armazenar as coordenadas de textura
+    std::vector<GLfloat> vBuffer; // vetor para armazenar os dados do VBO
 
-	std::string line;
-	/* while (std::getline(file, line)) {
-		std::istringstream ss(line);
-		std::string prefix;
-		ss >> prefix;
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Erro ao tentar abrir o arquivo " << filePath << std::endl;
+        return -1;
+    }
 
-		if (prefix == "mtllib") {
-			std::string mtlFile;
-			ss >> mtlFile;
-			//Extrai o diretório do arquivo .obj para buscar o arquivo .mtl no mesmo lugar
-			std::string dir = filePath.substr(0, filePath.find_last_of("/") + 1);
-			textureName = getTexturePathFromMTL(dir + mtlFile);		
-		}
-		else if (prefix == "v") {
-			vec3 pos;
-			ss >> pos.x >> pos.y >> pos.z;
-			temp_vertices.push_back(pos);	
-		}
-		else if (prefix == "vt") {
-			vec2 tex;
-			ss >> tex.x >> tex.y;
-			temp_texCoords.push_back(tex);
-		}
-		 else if (prefix == "f") {
-            // Leitura de face no formato: v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream ss(line);
+        std::string prefix;
+        ss >> prefix;
+
+        if (prefix == "mtllib") {
+            std::string mtlFile;
+            ss >> mtlFile;
+            std::string dir = filePath.substr(0, filePath.find_last_of("/") + 1);
+            textureName = getTexturePathFromMTL(dir + mtlFile);     
+        }
+        else if (prefix == "v") {
+            vec3 pos;
+            ss >> pos.x >> pos.y >> pos.z;
+            temp_vertices.push_back(pos);   
+        }
+        else if (prefix == "vt") {
+            vec2 tex;
+            ss >> tex.x >> tex.y;
+            temp_texCoords.push_back(tex);
+        }
+        else if (prefix == "f") {
             std::string vertexData;
+            // CORREÇÃO: A chave do for agora engloba toda a extração de dados
             for (int i = 0; i < 3; i++) {
                 ss >> vertexData;
                 std::replace(vertexData.begin(), vertexData.end(), '/', ' ');
                 std::istringstream faceSS(vertexData);
-                unsigned int vIdx, tIdx, nIdx;
- 		}
-				// Se o .obj não tiver normais (vn), a leitura pode falhar no nIdx, 
-                // mas para este escopo (posição e textura), isso é suficiente.
-               //faceSS >> vIdx >> tIdx;
-		 		// Recupera os dados (índices no .obj começam em 1)
+                unsigned int vIdx, tIdx;
+
+                // CORREÇÃO: Linha descomentada para realizar a leitura
+                faceSS >> vIdx >> tIdx; 
+
                 vec3 pos = temp_vertices[vIdx - 1];
                 vec2 tex = temp_texCoords[tIdx - 1];
 
-                // Adiciona ao buffer intercalado (x, y, z, s, t)
                 vBuffer.push_back(pos.x);
                 vBuffer.push_back(pos.y);
                 vBuffer.push_back(pos.z);
-                vBuffer.push_back(tex.s);
-                vBuffer.push_back(tex.t);
+                vBuffer.push_back(tex.x); // x corresponde a s
+                vBuffer.push_back(tex.y); // y corresponde a t
             }
-	} */
+        }
+    }
+
+    // Adicionando a geração dos buffers OpenGL que estava faltando
+    GLuint VAO, VBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vBuffer.size() * sizeof(GLfloat), vBuffer.data(), GL_STATIC_DRAW);
+
+    // Atributo 0: Posição (x, y, z)
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    // Atributo 1: Coordenada de Textura (s, t) -> offset de 3 floats
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    nVertices = vBuffer.size() / 5;
+
+    return VAO; // Retorna o identificador gerado
 }
