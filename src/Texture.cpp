@@ -51,6 +51,11 @@ int loadSimpleOBJ(string filePath, int &nVertices, string &textureName); // Prot
 // Dimensões da janela (pode ser alterado em tempo de execução)
 const GLuint WIDTH = 800, HEIGHT = 600;
 
+// Variáveis globais para controlar a rotação via teclado
+float angleX = 0.0f;
+float angleY = 0.0f;
+float angleZ = 0.0f;
+
 // Código fonte do Vertex Shader (em GLSL): ainda hardcoded
 const GLchar *vertexShaderSource = R"(
 #version 400
@@ -171,7 +176,14 @@ int main()
         mat4 model = mat4(1.0f);
         // Exemplo: Centralizando na tela (dependendo das coordenadas do seu OBJ)
         model = translate(model, vec3(400.0f, 300.0f, 0.0f)); 
+
+		// Aplicando as rotações controladas pelo teclado (x, y, z)
+        model = rotate(model, angleX, vec3(1.0f, 0.0f, 0.0f));
+        model = rotate(model, angleY, vec3(0.0f, 1.0f, 0.0f));
+        model = rotate(model, angleZ, vec3(0.0f, 0.0f, 1.0f));
+
         model = scale(model, vec3(100.0f, 100.0f, 100.0f)); // Ajuste a escala conforme o tamanho do seu modelo
+		
         glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
 
         // Desenha o objeto completo (todos os triângulos lidos do OBJ)
@@ -196,6 +208,14 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+	
+	// Controle de Rotação (Aciona segurando a tecla)
+    if (key == GLFW_KEY_X && (action == GLFW_PRESS || action == GLFW_REPEAT))
+        angleX += 5.0f;
+    if (key == GLFW_KEY_Y && (action == GLFW_PRESS || action == GLFW_REPEAT))
+        angleY += 5.0f;
+    if (key == GLFW_KEY_Z && (action == GLFW_PRESS || action == GLFW_REPEAT))
+        angleZ += 5.0f;
 }
 
 // Esta função está basntante hardcoded - objetivo é compilar e "buildar" um programa de

@@ -57,5 +57,17 @@ O objetivo desta etapa foi implementar o carregamento dinâmico de texturas (Map
 * **Mapeamento UV e Correção de Eixos:** Carregamento da imagem via `stb_image` com o ajuste de inversão vertical (`stbi_set_flip_vertically_on_load`) para garantir que a textura corresponda perfeitamente à orientação do OpenGL.
 * **Teste de Profundidade (Z-Buffer):** Ativação e limpeza do buffer de profundidade (`GL_DEPTH_TEST`) para corrigir o descarte de fragmentos e garantir a oclusão correta dos triângulos (evitando que o modelo fique "pelo avesso").
 
+### 🎮 Controles para Teste (Atividade 2)
+
+A cena permite interação em tempo real para validar o mapeamento das texturas em diferentes ângulos e comprovar a volumetria do modelo 3D. Utilize as seguintes teclas:
+
+**Rotação Interativa**
+* `X` - Rotaciona o modelo no Eixo X
+* `Y` - Rotaciona o modelo no Eixo Y
+* `Z` - Rotaciona o modelo no Eixo Z
+
+**Geral**
+* `ESC` - Encerra a execução e fecha a janela
+
 ## Aluna: Nathaly Loggiovini.
 ## Professor: Guilherme Chagas Kurtz.
