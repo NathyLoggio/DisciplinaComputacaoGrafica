@@ -39,5 +39,23 @@ A cena possui interação via teclado para testar as transformações geométric
 * `Y` - Gira os cubos no próprio Eixo Y
 * `Z` - Gira os cubos no próprio Eixo Z
 
+## Atividade 2: Leitura e Aplicação de Texturas em Modelos 3D (11/05/2026)
+
+### 📂 Arquivo Principal
+O código-fonte contendo a lógica de extração de dados e renderização texturizada está localizado em:
+
+> 📁 `DisciplinaComputacaoGrafica` / 📁 `src` / 📄 **`Texture.cpp`**
+
+---
+
+O objetivo desta etapa foi implementar o carregamento dinâmico de texturas (Mapeamento UV) a partir de modelos 3D exportados. O pipeline gráfico foi atualizado para interpretar corretamente os arquivos de geometria e materiais, substituindo as cores sólidas da atividade anterior por imagens 2D projetadas sobre a malha.
+
+### ⚙️ Funcionalidades Implementadas
+
+* **Leitura de Arquivos `.OBJ`:** Processamento das linhas de coordenadas de vértices (`v`) e de texturas (`vt`), unificando-as de forma intercalada no VBO (Vertex Buffer Object).
+* **Leitura de Arquivos `.MTL`:** Extração automatizada do caminho da imagem de textura difusa (`map_Kd`).
+* **Mapeamento UV e Correção de Eixos:** Carregamento da imagem via `stb_image` com o ajuste de inversão vertical (`stbi_set_flip_vertically_on_load`) para garantir que a textura corresponda perfeitamente à orientação do OpenGL.
+* **Teste de Profundidade (Z-Buffer):** Ativação e limpeza do buffer de profundidade (`GL_DEPTH_TEST`) para corrigir o descarte de fragmentos e garantir a oclusão correta dos triângulos (evitando que o modelo fique "pelo avesso").
+
 ## Aluna: Nathaly Loggiovini.
 ## Professor: Guilherme Chagas Kurtz.
