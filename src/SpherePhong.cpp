@@ -39,9 +39,9 @@ int setupShader();
 int setupGeometry();
 GLuint loadTexture(string filePath, int &width, int &height);
 
-void drawGeometry(GLuint shaderID, GLuint VAO, vec3 position, vec3 dimensions, float angle, int nVertices, vec3 color= vec3(1.0,0.0,0.0), vec3 axis = (vec3(0.0, 0.0, 1.0)));
+void drawGeometry(GLuint shaderID, GLuint VAO, vec3 position, vec3 dimensions, float angle, int nVertices, vec3 color = vec3(1.0, 0.0, 0.0), vec3 axis = (vec3(0.0, 0.0, 1.0)));
 GLuint generateSphere(float radius, int latSegments, int lonSegments, int &nVertices);
- 
+
 // Dimensões da janela (pode ser alterado em tempo de execução)
 const GLuint WIDTH = 800, HEIGHT = 800;
 
@@ -164,12 +164,11 @@ int main()
 
 	// Carregando uma textura e armazenando seu id
 	int imgWidth, imgHeight;
-	GLuint texID = loadTexture("../assets/tex/pixelWall.png",imgWidth,imgHeight);
+	GLuint texID = loadTexture("../assets/tex/pixelWall.png", imgWidth, imgHeight);
 
-	float ka = 0.1, kd =0.5, ks = 0.5, q = 10.0;
+	float ka = 0.1, kd = 0.5, ks = 0.5, q = 10.0;
 	vec3 lightPos = vec3(0.6, 1.2, -0.5);
-	vec3 camPos = vec3(0.0,0.0,-3.0);
-
+	vec3 camPos = vec3(0.0, 0.0, -3.0);
 
 	glUseProgram(shaderID);
 
@@ -180,12 +179,11 @@ int main()
 	glUniform1f(glGetUniformLocation(shaderID, "kd"), kd);
 	glUniform1f(glGetUniformLocation(shaderID, "ks"), ks);
 	glUniform1f(glGetUniformLocation(shaderID, "q"), q);
-	glUniform3f(glGetUniformLocation(shaderID, "lightPos"), lightPos.x,lightPos.y,lightPos.z);
-	glUniform3f(glGetUniformLocation(shaderID, "camPos"), camPos.x,camPos.y,camPos.z);
+	glUniform3f(glGetUniformLocation(shaderID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	glUniform3f(glGetUniformLocation(shaderID, "camPos"), camPos.x, camPos.y, camPos.z);
 
-	//Ativando o primeiro buffer de textura da OpenGL
+	// Ativando o primeiro buffer de textura da OpenGL
 	glActiveTexture(GL_TEXTURE0);
-	
 
 	// Matriz de projeção paralela ortográfica
 	// mat4 projection = ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
@@ -206,13 +204,12 @@ int main()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // cor de fundo
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glBindVertexArray(VAO); // Conectando ao buffer de geometria
-		glBindTexture(GL_TEXTURE_2D, texID); //conectando com o buffer de textura que será usado no draw
+		glBindVertexArray(VAO);				 // Conectando ao buffer de geometria
+		glBindTexture(GL_TEXTURE_2D, texID); // conectando com o buffer de textura que será usado no draw
 
 		// Primeiro Triângulo
 		drawGeometry(shaderID, VAO, vec3(0, 0, 0), vec3(1, 1, 1), 0.0, nVertices);
 
-	
 		glBindVertexArray(0); // Desconectando o buffer de geometria
 
 		// Troca os buffers da tela
@@ -300,9 +297,9 @@ int setupGeometry()
 	GLfloat vertices[] = {
 		// x    y    z   s    t    nx  ny    nz
 		// T0
-		-0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0,    // v0
-		 0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0,   // v1
-		 0.0,  0.5, 0.0, 0.5, 1.0, 0.0, 0.0, -1.0 	  // v2
+		-0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, // v0
+		0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0,  // v1
+		0.0, 0.5, 0.0, 0.5, 1.0, 0.0, 0.0, -1.0	   // v2
 	};
 
 	GLuint VBO, VAO;
@@ -326,16 +323,16 @@ int setupGeometry()
 	//  Tamanho em bytes
 	//  Deslocamento a partir do byte zero
 
-	//Atributo posição - coord x, y, z - 3 valores
+	// Atributo posição - coord x, y, z - 3 valores
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
 	glEnableVertexAttribArray(0);
 
-	//Atributo coordenada de textura - coord s, t - 2 valores
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(3* sizeof(GLfloat)));
+	// Atributo coordenada de textura - coord s, t - 2 valores
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
-	//Atributo componentes vetor normal
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(5* sizeof(GLfloat)));
+	// Atributo componentes vetor normal
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(5 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
 	// Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice
@@ -404,88 +401,91 @@ void drawGeometry(GLuint shaderID, GLuint VAO, vec3 position, vec3 dimensions, f
 	model = scale(model, dimensions);
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
 
-	//glUniform4f(glGetUniformLocation(shaderID, "inputColor"), color.r, color.g, color.b, 1.0f); // enviando cor para variável uniform inputColor
-																								//  Chamada de desenho - drawcall
-																								//  Poligono Preenchido - GL_TRIANGLES
+	// glUniform4f(glGetUniformLocation(shaderID, "inputColor"), color.r, color.g, color.b, 1.0f); // enviando cor para variável uniform inputColor
+	//   Chamada de desenho - drawcall
+	//   Poligono Preenchido - GL_TRIANGLES
 	glDrawArrays(GL_TRIANGLES, 0, nVertices);
 }
 
-GLuint generateSphere(float radius, int latSegments, int lonSegments, int &nVertices) {
-    vector<GLfloat> vBuffer; // Posição + Cor + Normal + UV
+GLuint generateSphere(float radius, int latSegments, int lonSegments, int &nVertices)
+{
+	vector<GLfloat> vBuffer; // Posição + Cor + Normal + UV
 
-    vec3 color = vec3(1.0f, 0.0f, 0.0f); // Laranja
+	vec3 color = vec3(1.0f, 0.0f, 0.0f); // Laranja
 
-    auto calcPosUVNormal = [&](int lat, int lon, vec3& pos, vec2& uv, vec3& normal) {
-        float theta = lat * pi<float>() / latSegments;
-        float phi = lon * 2.0f * pi<float>() / lonSegments;
+	auto calcPosUVNormal = [&](int lat, int lon, vec3 &pos, vec2 &uv, vec3 &normal)
+	{
+		float theta = lat * pi<float>() / latSegments;
+		float phi = lon * 2.0f * pi<float>() / lonSegments;
 
-        pos = vec3(
-            radius * cos(phi) * sin(theta),
-            radius * cos(theta),
-            radius * sin(phi) * sin(theta)
-        );
+		pos = vec3(
+			radius * cos(phi) * sin(theta),
+			radius * cos(theta),
+			radius * sin(phi) * sin(theta));
 
-        uv = vec2(
-            phi / (2.0f * pi<float>()),  // u
-            theta / pi<float>()          // v
-        );
+		uv = vec2(
+			phi / (2.0f * pi<float>()), // u
+			theta / pi<float>()			// v
+		);
 
-        // Normal é a posição normalizada (posição/radius)
-        normal = normalize(pos);
-    };
+		// Normal é a posição normalizada (posição/radius)
+		normal = normalize(pos);
+	};
 
-    for (int i = 0; i < latSegments; ++i) {
-        for (int j = 0; j < lonSegments; ++j) {
-            vec3 v0, v1, v2, v3;
-            vec2 uv0, uv1, uv2, uv3;
-            vec3 n0, n1, n2, n3;
+	for (int i = 0; i < latSegments; ++i)
+	{
+		for (int j = 0; j < lonSegments; ++j)
+		{
+			vec3 v0, v1, v2, v3;
+			vec2 uv0, uv1, uv2, uv3;
+			vec3 n0, n1, n2, n3;
 
-            calcPosUVNormal(i, j, v0, uv0, n0);
-            calcPosUVNormal(i + 1, j, v1, uv1, n1);
-            calcPosUVNormal(i, j + 1, v2, uv2, n2);
-            calcPosUVNormal(i + 1, j + 1, v3, uv3, n3);
+			calcPosUVNormal(i, j, v0, uv0, n0);
+			calcPosUVNormal(i + 1, j, v1, uv1, n1);
+			calcPosUVNormal(i, j + 1, v2, uv2, n2);
+			calcPosUVNormal(i + 1, j + 1, v3, uv3, n3);
 
-            // Primeiro triângulo
-            vBuffer.insert(vBuffer.end(), { v0.x, v0.y, v0.z, color.r, color.g, color.b, n0.x, n0.y, n0.z, uv0.x, uv0.y });
-            vBuffer.insert(vBuffer.end(), { v1.x, v1.y, v1.z, color.r, color.g, color.b, n1.x, n1.y, n1.z, uv1.x, uv1.y });
-            vBuffer.insert(vBuffer.end(), { v2.x, v2.y, v2.z, color.r, color.g, color.b, n2.x, n2.y, n2.z, uv2.x, uv2.y });
+			// Primeiro triângulo
+			vBuffer.insert(vBuffer.end(), {v0.x, v0.y, v0.z, color.r, color.g, color.b, n0.x, n0.y, n0.z, uv0.x, uv0.y});
+			vBuffer.insert(vBuffer.end(), {v1.x, v1.y, v1.z, color.r, color.g, color.b, n1.x, n1.y, n1.z, uv1.x, uv1.y});
+			vBuffer.insert(vBuffer.end(), {v2.x, v2.y, v2.z, color.r, color.g, color.b, n2.x, n2.y, n2.z, uv2.x, uv2.y});
 
-            // Segundo triângulo
-            vBuffer.insert(vBuffer.end(), { v1.x, v1.y, v1.z, color.r, color.g, color.b, n1.x, n1.y, n1.z, uv1.x, uv1.y });
-            vBuffer.insert(vBuffer.end(), { v3.x, v3.y, v3.z, color.r, color.g, color.b, n3.x, n3.y, n3.z, uv3.x, uv3.y });
-            vBuffer.insert(vBuffer.end(), { v2.x, v2.y, v2.z, color.r, color.g, color.b, n2.x, n2.y, n2.z, uv2.x, uv2.y });
-        }
-    }
+			// Segundo triângulo
+			vBuffer.insert(vBuffer.end(), {v1.x, v1.y, v1.z, color.r, color.g, color.b, n1.x, n1.y, n1.z, uv1.x, uv1.y});
+			vBuffer.insert(vBuffer.end(), {v3.x, v3.y, v3.z, color.r, color.g, color.b, n3.x, n3.y, n3.z, uv3.x, uv3.y});
+			vBuffer.insert(vBuffer.end(), {v2.x, v2.y, v2.z, color.r, color.g, color.b, n2.x, n2.y, n2.z, uv2.x, uv2.y});
+		}
+	}
 
-    // Criar VAO e VBO
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+	// Criar VAO e VBO
+	GLuint VAO, VBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
 
-    glBindVertexArray(VAO);
+	glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vBuffer.size() * sizeof(GLfloat), vBuffer.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, vBuffer.size() * sizeof(GLfloat), vBuffer.data(), GL_STATIC_DRAW);
 
-    // Layout da posição (location 0)
-glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(0));
-glEnableVertexAttribArray(0);
+	// Layout da posição (location 0)
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(0));
+	glEnableVertexAttribArray(0);
 
-// Layout da cor (location 1)
-glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-glEnableVertexAttribArray(1);
+	// Layout da cor (location 1)
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 
-// Layout da normal (location 2)
-glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-glEnableVertexAttribArray(2);
+	// Layout da normal (location 2)
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
 
-// Layout da UV (location 3)
-glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
-glEnableVertexAttribArray(3);
+	// Layout da UV (location 3)
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(9 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(3);
 
-    glBindVertexArray(0);
+	glBindVertexArray(0);
 
-    nVertices = vBuffer.size() / 11; // Cada vértice agora tem 11 floats!
+	nVertices = vBuffer.size() / 11; // Cada vértice agora tem 11 floats!
 
-    return VAO;
+	return VAO;
 }
