@@ -69,5 +69,50 @@ A cena permite interação em tempo real para validar o mapeamento das texturas 
 **Geral**
 * `ESC` - Encerra a execução e fecha a janela
 
+* # Sistema de Iluminação de 3 Pontos (Three-Point Lighting)
+
+Atividade desenvolvida para a disciplina de *Computação Gráfica*.
+
+*Alunas:* * Nathaly Loggiovini  
+* Isadora Albano  
+
+---
+## 📌 M4 | Tarefa - Atividade vivencial 2
+## Alunas: Nathaly Loggiovini e Isadora Albano.
+
+O objetivo deste projeto é implementar o conceito clássico de *Sistema de Iluminação de 3 Pontos* utilizando a linguagem C++ e a API gráfica OpenGL. A cena renderiza uma esfera tridimensional sombreada, controlada e iluminada por três fontes de luz distintas que trabalham juntas para dar volume, separação e destaque ao objeto:
+
+1. *Key Light (Luz Principal):* A fonte mais brilhante, posicionada à frente e lateralmente ao objeto, responsável por definir as principais luzes e sombras.
+2. *Fill Light (Luz de Preenchimento):* Posicionada no lado oposto à Key Light com menor intensidade, usada para suavizar as sombras densas criadas pela luz principal.
+3. *Backlight (Luz de Fundo):* Posicionada atrás do objeto para criar uma borda iluminada (silhueta), separando visualmente o elemento do fundo da cena.
+
+O cálculo de iluminação utiliza o modelo de reflexão local associado a um fator de *atenuação da luz pela distância*, garantindo um decaimento realista da intensidade luminosa conforme a posição dos pontos na cena.
+
+---
+
+## 📂 Localização do Arquivo Principal
+
+Para fins de correção, o código-fonte principal que contém toda a lógica de Shaders, cálculo de iluminação e a malha da esfera está localizado em:
+* src/Light.cpp
+
+---
+
+## 🎮 Controles Interativos
+
+É possível ligar e desligar cada uma das fontes de luz em tempo de execução através do teclado para observar o impacto individual de cada componente no sombreamento da esfera:
+
+| Tecla | Função | Feedback no Terminal |
+| :---: | :--- | :--- |
+| *1* | Alterna o estado da *Key Light* (Luz Principal) | Key Light: LIGADA / DESLIGADA |
+| *2* | Alterna o estado da *Fill Light* (Luz de Preenchimento) | Fill Light: LIGADA / DESLIGADA |
+| *3* | Alterna o estado da *Backlight* (Luz de Fundo) | Backlight: LIGADA / DESLIGADA |
+| *ESC*| Encerra a aplicação com segurança | — |
+
+---
+
+## 🛠️ Como Compilar e Executar
+
+O projeto utiliza o *CMake* para gerenciamento de build. Siga os passos abaixo no terminal a partir do diretório raiz do projeto:
+
 ## Aluna: Nathaly Loggiovini.
 ## Professor: Guilherme Chagas Kurtz.
