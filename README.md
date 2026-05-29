@@ -110,9 +110,34 @@ Para fins de correção, o código-fonte principal que contém toda a lógica de
 
 ---
 
-## 🛠️ Como Compilar e Executar
+### Atividade 3: Implementação do Modelo de Iluminação Phong (28/05/2026)
 
-O projeto utiliza o *CMake* para gerenciamento de build. Siga os passos abaixo no terminal a partir do diretório raiz do projeto:
+📂 **Arquivo Principal**
+
+O código-fonte contendo a implementação do modelo de iluminação e a renderização do modelo 3D (Suzanne) está localizado em:
+📁 `DisciplinaComputacaoGrafica` / 📁 `src` / 📄 `PhongModel.cpp`
+
+Nesta atividade, o foco foi a implementação do **Modelo de Reflexão de Phong** para criar uma iluminação realista em superfícies curvas. 
+O pipeline gráfico foi expandido para calcular a iluminação por fragmento, integrando os componentes ambiente, difuso e especular, 
+utilizando dados extraídos diretamente de arquivos `.mtl`.
+
+⚙️ **Funcionalidades Implementadas**
+
+* **Extração de Materiais (MTL):** O parser do arquivo `.obj` foi atualizado para ler os coeficientes de iluminação (`Ka`, `Kd`, `Ks`) e o expoente de brilho (`Ns`) do arquivo de material associado.
+* **Modelo de Reflexão de Phong:** Implementação matemática no *Fragment Shader* dos três componentes principais:
+    * **Ambiente (`Ka`):** Iluminação constante para evitar áreas totalmente pretas.
+    * **Difusa (`Kd`):** Cálculo baseado no produto escalar entre a normal da superfície e a direção da luz.
+    * **Especular (`Ks`):** Cálculo de realces brilhantes (brilho especular) baseado na reflexão do vetor de visão.
+* **Pipeline de Dados:** Inclusão das normais (`vn`) no VBO para permitir o cálculo correto da iluminação sobre a geometria complexa do modelo "Suzanne".
+* **Renderização:** Integração de texturas com o modelo de iluminação, permitindo que a textura `pixelWall.png` receba o sombreamento e o brilho calculado pelo shader.
+
+🎮 **Controles para Teste**
+
+A cena mantém a visualização dinâmica do modelo com rotação automática para análise do comportamento da luz especular sobre a superfície:
+* **Rotação:** O objeto rotaciona automaticamente no eixo Y.
+* **ESC:** Encerra a execução e fecha a janela.
+
+---
 
 ## Aluna: Nathaly Loggiovini.
 ## Professor: Guilherme Chagas Kurtz.
