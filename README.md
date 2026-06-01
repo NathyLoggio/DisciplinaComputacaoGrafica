@@ -133,11 +133,47 @@ utilizando dados extraídos diretamente de arquivos `.mtl`.
 
 🎮 **Controles para Teste**
 
-A cena mantém a visualização dinâmica do modelo com rotação automática para análise do comportamento da luz especular sobre a superfície:
+A cena mantém a visualização dinâmica do modelo com rotação automática para análise do comportamento git sdda luz especular sobre a superfície:
 * **Rotação:** O objeto rotaciona automaticamente no eixo Y.
 * **ESC:** Encerra a execução e fecha a janela.
 
 ---
+
+## Atividade 4: Implementação de Câmera em Primeira Pessoa (31/05/2026)
+
+### 📂 Arquivo Principal
+
+O código-fonte referente à criação e controle da câmera virtual está localizado em:
+
+> 📁 `DisciplinaComputacaoGrafica` / 📁 `src` / 📄 **`Camera.cpp`**
+
+---
+
+Nesta atividade, foi implementada uma câmera virtual com sistema de navegação livre, simulando a visão em primeira pessoa (estilo FPS). A lógica matemática foi encapsulada dentro de uma classe `Camera`, estruturando e isolando os atributos de posicionamento (vetores e coordenadas) e orientação (ângulos de Euler *Yaw* e *Pitch*). O pipeline de renderização foi atualizado para operar com a matriz de Visualização (`view`) e Projeção em Perspectiva (`perspective`).
+
+### ⚙️ Funcionalidades Implementadas
+
+* **Orientação via Mouse (Pitch e Yaw):** Cálculo da direção da câmera (vetor `Front`) a partir do deslocamento do cursor na tela. Implementação de trava no eixo Y (*constrainPitch*) para evitar o efeito de *Gimbal Lock*.
+* **Movimentação Relativa:** Movimento nos eixos x e z baseado na direção atual em que a câmera está olhando, utilizando os vetores normais (`Front`, `Right` e `Up`).
+* **Controle de Tempo (Delta Time):** Implementação do diferencial de tempo entre os quadros para garantir que a velocidade de movimento da câmera seja constante, independentemente da taxa de atualização (*framerate*) do computador.
+* **Zoom (FOV):** Alteração dinâmica do Campo de Visão (*Field of View*) na matriz de projeção através do *scroll* do mouse.
+
+### 🎮 Controles para Teste (Atividade 4)
+
+A cena permite a exploração livre do ambiente 3D para inspecionar o modelo renderizado. Utilize os seguintes comandos:
+
+**Movimentação (Teclado)**
+* `W` - Move a câmera para a Frente
+* `S` - Move a câmera para Trás
+* `A` - Move a câmera para a Esquerda
+* `D` - Move a câmera para a Direita
+
+**Visão (Mouse)**
+* `Movimento do Mouse` - Rotaciona a direção da visão (olhar ao redor).
+* `Scroll do Mouse` - Aproxima e afasta a visão (Zoom In / Out).
+
+**Geral**
+* `ESC` - Encerra a execução e fecha a janela.
 
 ## Aluna: Nathaly Loggiovini.
 ## Professor: Guilherme Chagas Kurtz.
