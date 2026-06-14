@@ -175,5 +175,40 @@ A cena permite a exploração livre do ambiente 3D para inspecionar o modelo ren
 **Geral**
 * `ESC` - Encerra a execução e fecha a janela.
 
+---
+
+## Atividade 5: Trajetórias Cíclicas com Curvas Paramétricas (13/06/2026)
+
+### 📂 Arquivo Principal
+
+O código-fonte referente à criação de trajetórias e interpolação paramétrica está localizado em:
+
+> 📁 `DisciplinaComputacaoGrafica` / 📁 `src` / 📄 **`Pathway.cpp`**
+
+---
+
+Nesta atividade, foi implementado um sistema de trajetória dinâmica para o modelo 3D. Através da navegação pelo cenário com a câmera em primeira pessoa, o usuário pode marcar pontos de controle no espaço. O modelo então realiza a translação contínua e cíclica entre essas coordenadas, utilizando matemática de curvas paramétricas para garantir uma movimentação fluida.
+
+### ⚙️ Funcionalidades Implementadas
+
+* **Captura de Coordenadas:** Registro dinâmico de pontos de controle (`controlPoints`) a partir da posição atual da câmera, permitindo criar caminhos personalizados no espaço 3D em tempo real.
+* **Curva Cúbica de Catmull-Rom:** Implementação da função matemática baseada na matriz de Hermite, garantindo interpolação exata (o objeto passa obrigatoriamente sobre os pontos marcados) e continuidade C1 (curvas suaves na mudança de direção).
+* **Animação Cíclica:** Estruturação dos índices da curva utilizando o operador de módulo (`%`), criando um loop infinito que retorna o objeto automaticamente para a primeira posição do caminho.
+* **Independência de Framerate:** Interpolação polinomial vinculada ao `deltaTime` da aplicação, assegurando que o tempo de transição na curva seja consistente.
+
+### 🎮 Controles para Teste (Atividade 5)
+
+Utilize os comandos da câmera para explorar a cena e a nova tecla de ação para marcar os pontos da trajetória:
+
+**Criação de Caminho**
+* `P` - Salva a coordenada atual da câmera como um ponto de controle para a trajetória. Pressione em múltiplos locais para definir o caminho do objeto.
+
+**Navegação Padrão**
+* `W`, `A`, `S`, `D` - Movimentação nos eixos.
+* `Mouse` - Direciona a visão.
+* `ESC` - Encerra a execução e fecha a janela.
+
+---
+
 ## Aluna: Nathaly Loggiovini.
 ## Professor: Guilherme Chagas Kurtz.
