@@ -204,8 +204,8 @@ Utilize os comandos da câmera para explorar a cena e a nova tecla de ação par
 * `P` - Salva a coordenada atual da câmera como um ponto de controle para a trajetória. Pressione em múltiplos locais para definir o caminho do objeto.
 
 **Navegação Padrão**
-* `W`, `A`, `S`, `D` - Movimentação nos eixos.
-* `Mouse` - Direciona a visão.
+* `W`, `A`, `S`, `D`: Movimentação nos eixos da cena (frente, esquerda, trás, direita).
+* `Mouse` - Direciona o olhar da câmera (Yaw e Pitch).
 * `ESC` - Encerra a execução e fecha a janela.
 
 ---
