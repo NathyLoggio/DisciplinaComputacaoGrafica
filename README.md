@@ -177,7 +177,7 @@ A cena permite a exploração livre do ambiente 3D para inspecionar o modelo ren
 
 ---
 
-## Atividade 5: Trajetórias Cíclicas com Curvas Paramétricas (13/06/2026)
+## Atividade 5: Trajetórias Cíclicas com Curvas Paramétricas (16/06/2026)
 
 ### 📂 Arquivo Principal
 

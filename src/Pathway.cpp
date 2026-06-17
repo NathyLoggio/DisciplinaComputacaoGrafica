@@ -304,6 +304,14 @@ int main()
             objectPos = controlPoints[0]; // Permanece estático se apenas um ponto existir
         }
 
+        // 1. Matriz de Projeção (Perspectiva)
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+        glUniformMatrix4fv(glGetUniformLocation(shaderID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+        // 2. Matriz de Visualização (Câmera)
+        glm::mat4 view = camera.GetViewMatrix();
+        glUniformMatrix4fv(glGetUniformLocation(shaderID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+
         // 3. Matriz de Modelo (Posicionamento do OBJ)
         mat4 model = mat4(1.0f);
         model = translate(model, objectPos); 
